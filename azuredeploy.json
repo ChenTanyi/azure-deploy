@@ -118,7 +118,7 @@
                         "files": {
                             "index.js": "module.exports = function (context, eventHubMessages) {\r\n    context.log(eventHubMessages);\r\n\r\n    var message = {\r\n        // could use temporary settings in the comment below and uncomment it\r\n        /*\"personalizations\": [\r\n            {\r\n            \"to\": [\r\n                {\r\n                \"email\": \"<temporary toEmail>\"\r\n                }\r\n            ],\r\n            \"subject\": \"<temporary subject>\"\r\n            }\r\n        ],\r\n        \"from\": {\r\n            \"email\": \"<temporary fromEmail>\"\r\n        },*/\r\n        \"content\": [\r\n            {\r\n            \"type\": \"text/plain\",\r\n            \"value\": eventHubMessages\r\n            }\r\n        ]\r\n    };\r\n\r\n    context.done(null, message);\r\n};\r\n"
                         }
-                    },
+                    }
                 }
             ]
         },
@@ -146,7 +146,7 @@
                 "features": "None"
             },
             "sku": {
-                "name": "[parameters('iotHubSku')]",
+                "name": "[first(split(parameters('iotHubSku'), ' '))]",
                 "capacity": "[parameters('iotHubUnits')]"
             }
         }
