@@ -147,7 +147,7 @@
     ],
     "outputs": {
         "value": {
-            "type": "string",
+            "type": "array",
             "value": "[listkeys(parameters('iotHubName'), '2017-01-19')]"
         }
     },
