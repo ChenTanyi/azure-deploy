@@ -31,6 +31,10 @@
         },
         "fromEmail": {
             "type": "string"
+        },
+        "repoUrl": {
+            "type": "string",
+            "defaultValue": "https://github.com/ChenTanyi/azure-deploy.git"
         }
     },
     "variables": {
@@ -91,37 +95,15 @@
             "resources": [
                 {
                     "apiVersion": "2015-08-01",
-                    "name": "DoorMonitor",
-                    "type": "functions",
+                    "name": "web",
+                    "type": "sourcecontrols",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
-                        "[resourceId('Microsoft.Devices/IotHubs', parameters('iotHubName'))]"
+                        "[resourceId('Microsoft.Web/sites', variables('functionName'))]"
                     ],
                     "properties": {
-                        "config": {
-                            "bindings": [
-                                {
-                                "type": "eventHubTrigger",
-                                "name": "eventHubMessages",
-                                "direction": "in",
-                                "path": "%eventHubConnectionPath%",
-                                "connection": "eventHubConnectionString"
-                                },
-                                {
-                                "name": "$return",
-                                "type": "sendGrid",
-                                "direction": "out",
-                                "apiKey": "mySendGridKey",
-                                "to": "[parameters('toEmail')]",
-                                "from": "[parameters('fromEmail')]",
-                                "subject": "Door Status Changed"
-                                }
-                            ],
-                            "disabled": false
-                        },
-                        "files": {
-                            "index.js": "module.exports = function (context, eventHubMessages) {\r\n    context.log(eventHubMessages);\r\n\r\n    var message = {\r\n        // could use temporary settings in the comment below and uncomment it\r\n        /*\"personalizations\": [\r\n            {\r\n            \"to\": [\r\n                {\r\n                \"email\": \"<temporary toEmail>\"\r\n                }\r\n            ],\r\n            \"subject\": \"<temporary subject>\"\r\n            }\r\n        ],\r\n        \"from\": {\r\n            \"email\": \"<temporary fromEmail>\"\r\n        },*/\r\n        \"content\": [\r\n            {\r\n            \"type\": \"text/plain\",\r\n            \"value\": eventHubMessages\r\n            }\r\n        ]\r\n    };\r\n\r\n    context.done(null, message);\r\n};\r\n"
-                        }
+                        "RepoUrl": "[parameters('repoUrl')]",
+                        "branch": "azureFunction",
+                        "IsManualIntegration": true
                     }
                 }
             ]
