@@ -79,6 +79,14 @@
                             "value": "[parameters('sendGridApiKey')]"
                         },
                         {
+                            "name": "toEmail",
+                            "value": "[parameters('toEmail')]"
+                        },
+                        {
+                            "name": "fromEmail",
+                            "value": "[parameters('fromEmail')]"
+                        },
+                        {
                             "name": "eventHubConnectionPath",
                             "value": "[concat(parameters('iotHubName'), '-', uniquestring(resourceGroup().id))]"
                         }
@@ -137,6 +145,12 @@
             }
         }
     ],
+    "outputs": {
+        "value": {
+            "type": "string",
+            "value": "[listkeys(parameters('iotHubName'), '2017-01-19')]"
+        }
+    },
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0"
 }
