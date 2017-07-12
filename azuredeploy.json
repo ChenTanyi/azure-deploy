@@ -39,8 +39,7 @@
     },
     "variables": {
         "functionName": "[concat('function', uniquestring(resourceGroup().id))]",
-        "storageName": "[concat('storage', uniquestring(resourceGroup().id))]",
-        "eventHubConnectionString": "[concat('Endpoint=',reference(resourceId('Microsoft.Devices/IoTHubs',parameters('iothubName'))).eventHubEndpoints.events.endpoint,';SharedAccessKeyName=iothubowner;SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs',parameters('iothubName')), '2017-01-19').value[0].primaryKey)]"
+        "storageName": "[concat('storage', uniquestring(resourceGroup().id))]"
     },
     "resources": [
         {
@@ -70,7 +69,7 @@
         },
         "Endpoints": {
             "type": "string",
-            "value": "[variable('eventHubConnectionString')]"
+            "value": "[concat('Endpoint=',reference(resourceId('Microsoft.Devices/IoTHubs',parameters('iothubName'))).eventHubEndpoints.events.endpoint,';SharedAccessKeyName=iothubowner;SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs',parameters('iothubName')), '2017-01-19').value[0].primaryKey)]"
         }
     },
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
