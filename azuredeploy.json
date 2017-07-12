@@ -6,13 +6,13 @@
         "iotHubSku": {
             "type": "string",
             "allowedValues": [
-                "F1",
-                "S1",
-                "S2"
+                "F1 - only one per subscription",
+                "S1 - $50 / units",
+                "S2 - $500 / units"
             ],
-            "defaultValue": "F1"
+            "defaultValue": "F1 - only one per subscription"
         },
-        "iotHubCapacity": {
+        "iotHubUnits": {
             "type": "int",
             "minValue": 1,
             "defaultValue": 1
@@ -22,6 +22,15 @@
             "minValue": 2,
             "maxValue": 32,
             "defaultValue": 2
+        },
+        "sendGridApiKey": {
+            "type": "string"
+        },
+        "toEmail": {
+            "type": "string"
+        },
+        "fromEmail": {
+            "type": "string"
         }
     },
     "variables": {
@@ -60,16 +69,58 @@
                         {
                             "name": "WEBSITE_NODE_DEFAULT_VERSION",
                             "value": "6.5.0"
+                        },
+                        {
+                            "name": "mySendGridKey",
+                            "value": "[parameters('sendGridApiKey')]"
                         }
                     ]
                 },
                 "clientAffinityEnabled": false
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]",
+                "[resourceId('Microsoft.Devices/IotHubs', parameters('iotHubName'))]"
             ],
             "location": "[resourceGroup().location]",
-            "kind": "functionapp"
+            "kind": "functionapp",
+            "resources": [
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "DoorMonitor",
+                    "type": "functions",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', variables('functionName'))]",
+                        "[resourceId('Microsoft.Devices/IotHubs', parameters('iotHubName'))]"
+                    ],
+                    "properties": {
+                        "config": {
+                            "bindings": [
+                                {
+                                "type": "eventHubTrigger",
+                                "name": "eventHubMessages",
+                                "direction": "in",
+                                "path": "%eventHubConnectionPath%",
+                                "connection": "eventHubConnectionString"
+                                },
+                                {
+                                "name": "$return",
+                                "type": "sendGrid",
+                                "direction": "out",
+                                "apiKey": "mySendGridKey",
+                                "to": "[parameters('toEmail')]",
+                                "from": "[parameters('fromEmail')]",
+                                "subject": "Door Status Changed"
+                                }
+                            ],
+                            "disabled": false
+                        },
+                        "files": {
+                            "index.js": "module.exports = function (context, eventHubMessages) {\r\n    context.log(eventHubMessages);\r\n\r\n    var message = {\r\n        // could use temporary settings in the comment below and uncomment it\r\n        /*\"personalizations\": [\r\n            {\r\n            \"to\": [\r\n                {\r\n                \"email\": \"<temporary toEmail>\"\r\n                }\r\n            ],\r\n            \"subject\": \"<temporary subject>\"\r\n            }\r\n        ],\r\n        \"from\": {\r\n            \"email\": \"<temporary fromEmail>\"\r\n        },*/\r\n        \"content\": [\r\n            {\r\n            \"type\": \"text/plain\",\r\n            \"value\": eventHubMessages\r\n            }\r\n        ]\r\n    };\r\n\r\n    context.done(null, message);\r\n};\r\n"
+                        }
+                    },
+                }
+            ]
         },
         {
             "apiVersion": "2015-05-01-preview",
@@ -96,7 +147,7 @@
             },
             "sku": {
                 "name": "[parameters('iotHubSku')]",
-                "capacity": "[parameters('iotHubCapacity')]"
+                "capacity": "[parameters('iotHubUnits')]"
             }
         }
     ],
