@@ -73,6 +73,10 @@
                         {
                             "name": "mySendGridKey",
                             "value": "[parameters('sendGridApiKey')]"
+                        },
+                        {
+                            "name": "eventHubConnectionPath",
+                            "value": "[concat(parameters('iotHubName'), '-', uniquestring(resourceGroup().id))]"
                         }
                     ]
                 },
