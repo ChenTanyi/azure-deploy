@@ -65,7 +65,7 @@
     "outputs": {
         "value": {
             "type": "object",
-            "value": "[listKeys(resourceId('Microsoft.Devices/IotHubs', parameters('iotHubName')), '2017-01-19')]"
+            "value": "[listEndpoints(resourceId('Microsoft.Devices/IotHubs', parameters('iotHubName')), '2017-01-19')]"
         }
     },
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
