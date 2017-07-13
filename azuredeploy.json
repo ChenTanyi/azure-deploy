@@ -70,6 +70,10 @@
         "Endpoints": {
             "type": "string",
             "value": "[concat('Endpoint=',reference(resourceId('Microsoft.Devices/IoTHubs',parameters('iothubName'))).eventHubEndpoints.events.endpoint,';SharedAccessKeyName=iothubowner;SharedAccessKey=',listKeys(resourceId('Microsoft.Devices/IotHubs',parameters('iothubName')), '2017-01-19').value[0].primaryKey)]"
+        },
+        "iothub": {
+            "type": "object",
+            "value": "[resourceId('Microsoft.Devices/IoTHubs', parameters('iothubName')))]"
         }
     },
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
